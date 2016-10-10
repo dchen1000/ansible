@@ -1,6 +1,4 @@
-#!/usr/bin/env ansible-playbook
-
-- name: Configure webserver with nginx
+- name: Configure webserver with nginx and tls
   hosts: webservers
   #sudo: True
   become: true
@@ -8,7 +6,7 @@
     key_file: /etc/nginx/ssl/nginx.key
     cert_file: /etc/nginx/ssl/nginx.crt
     conf_file: /etc/nginx/sites-available/default
-    servername: localhost
+    server_name: localhost
   tasks:
     - name: install nginx
       apt: name=nginx update_cache=yes cache_valid_time=3600
@@ -25,7 +23,7 @@
       notify: restart nginx
     
     - name: copy nginx config file
-      copy: src=templates/nginx.conf.j2 dest={{ conf_file }}
+      template: src=templates/nginx.conf.j2 dest={{ conf_file }}
       notify: restart nginx
             
     - name: enable configuration
